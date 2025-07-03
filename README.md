@@ -185,11 +185,12 @@ For plugins that require access to Node.js modules (like `fs` or `axios`) or nee
 ├── plugin.json
 ├── index.html
 └── script.js
+└── package.json
 ```
 
-### Using Node.js Dependencies in Your Backend
+### Using Third-Party Node.js Libraries in Your Backend
 
-Your plugin's backend can have its own Node.js dependencies. WinTool will automatically install them for you.
+Your plugin's backend can use its own third-party Node.js dependencies (e.g., `axios`, `lodash`, etc.), and WinTool will automatically install them for you upon startup.
 
 1.  **Create a `package.json`:** In your plugin's root folder, create a `package.json` file and list your dependencies there.
 
@@ -200,22 +201,20 @@ Your plugin's backend can have its own Node.js dependencies. WinTool will automa
       "version": "1.0.0",
       "description": "Dependencies for my advanced plugin.",
       "dependencies": {
-        "axios": "^1.10.0"
+        "axios": "^0.21.1"
       }
     }
     ```
 
-2.  **Require Dependencies in `backend.js`:** WinTool provides a secure `backendApi.require` function to load your plugin's dependencies. This ensures that your plugin can only access modules from its own `node_modules` folder.
+2.  **Require Dependencies in `backend.js`:** In your backend script, simply `require()` the module as you normally would. When WinTool loads your plugin, it will ensure the dependencies from your `package.json` are installed and available.
 
     **Example `backend.js`:**
     ```javascript
     // my-advanced-plugin/backend.js
+    const axios = require('axios'); // You can require your dependency directly.
 
     function initialize(backendApi) {
         console.log('Initializing my advanced plugin backend!');
-
-        // Load the 'axios' library from this plugin's node_modules folder
-        const axios = backendApi.require('axios');
 
         // Register a handler that uses the library
         backendApi.registerHandler('fetch-data', async (url) => {
@@ -231,7 +230,7 @@ Your plugin's backend can have its own Node.js dependencies. WinTool will automa
 
     module.exports = { initialize };
     ```
-When WinTool starts, it will detect your plugin's `package.json` and automatically run `npm install` inside your plugin's folder if it hasn't been run before. This makes your plugin self-contained and easy to distribute.
+When WinTool starts, it will detect your plugin's `package.json` and automatically run `npm install` inside your plugin's folder if `node_modules` is missing. This makes your plugin self-contained and easy to distribute.
 
 ### Calling Your Backend from Your Frontend
 
@@ -252,9 +251,9 @@ async function onButtonClick() {
 }
 ```
 
-## Using Third-Party Libraries (Frontend)
+## Using Third-Party Libraries (Frontend UI)
 
-Your plugin can use third-party **frontend** libraries (e.g., for charts, animations, date formatting). Because plugins are sandboxed for security, you must include them directly.
+Your plugin can use third-party **frontend** libraries (e.g., for charts, animations, date formatting). Because the plugin's UI runs in a secure, sandboxed environment without direct Node.js access, you must include any frontend libraries directly in your plugin folder.
 
 ### Method 1: CDN (Easiest)
 
@@ -341,7 +340,7 @@ function cleanup() {
     *   `var(--border-color)`: For borders and dividers.
 3.  **Asynchronous Operations:** All `wintoolAPI` calls are asynchronous. Always use `.then()/.catch()` or `async/await` to handle them properly.
 4.  **Error Handling:** Your plugin should gracefully handle cases where API calls fail. Display a user-friendly error message instead of leaving the UI in a broken state.
-5.  **Signaling Readiness:** To ensure WinTool's loading progress bar is accurate, signal that your plugin has finished initializing by calling `window.markTabAsReady('your-plugin-id')` at the end of your main script logic.
+5.  **Asynchronous Loading:** Your plugin's HTML, CSS, and JavaScript are loaded asynchronously. Ensure any initialization logic in your `script.js` runs after the DOM is fully loaded.
 
 ## Distributing Your Plugin
 

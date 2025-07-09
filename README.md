@@ -33,6 +33,22 @@ This guide will walk you through creating your own plugins to extend the functio
 
 ---
 
+## ⚙️ Enabling Developer Mode
+
+Before you begin developing or testing plugins, it is highly recommended that you enable Developer Mode. This mode provides access to several tools that are invaluable for debugging and performance monitoring.
+
+**Developer tools include:**
+-   **In-App Log Viewer**: A separate window that displays real-time `console.log` messages from both the main and renderer processes.
+-   **Performance Overlay**: A small overlay in the bottom-right corner of the application that shows real-time FPS, CPU, and memory usage.
+
+**How to Enable:**
+1.  Open WinTool and click the **Settings** button in the sidebar.
+2.  Navigate to the **Application** settings panel.
+3.  Check the box for **Enable Developer Tools**.
+4.  Save your settings. A restart may be required for all developer features to become active.
+
+---
+
 ## 🚀 Getting Started
 
 ### Using the Plugin Template
@@ -67,8 +83,9 @@ Every plugin is a directory inside `AppData\Local\MTechTool\Plugins\` and must c
 └── my-cool-plugin/
     ├── config.json     // (Required) Manifest file with metadata.
     ├── index.html      // (Required) The UI of the plugin.
-    ├── script.js       // (Required) The logic and API calls.
-    └── styles.css      // (Required) The styling for the UI.
+    ├── script.js       // (Required) The logic for the UI.
+    ├── styles.css      // (Optional) The styling for the UI.
+    └── backend.js      // (Optional) The Node.js backend logic.
 ```
 
 ### The Manifest: `config.json`
@@ -79,6 +96,7 @@ This file tells WinTool how to load your plugin.
 {
   "name": "My Cool Plugin",
   "icon": "fas fa-star",
+  "backend": "backend.js",
   "description": "A brief description of what this plugin does.",
   "version": "1.0.0",
   "author": "Your Name"
@@ -89,6 +107,7 @@ This file tells WinTool how to load your plugin.
 
 *   `name` (string, required): The human-readable name of your plugin, which will appear in the sidebar.
 *   `icon` (string, required): The [Font Awesome](https://fontawesome.com/v5/search?m=free) icon class (e.g., `"fas fa-cogs"`).
+*   `backend` (string, optional): The path to the plugin's backend script. If provided, WinTool will load this script in the main process.
 *   `description` (string, optional): A brief summary of your plugin's functionality.
 *   `version` (string, optional): The version of your plugin.
 *   `author` (string, optional): Your name or username.
@@ -337,16 +356,88 @@ Plugins cannot access the file system directly. They **must** use the `window.wi
 
 ---
 
-## 🎨 Using Frontend Libraries
+## 🎨 UI Component Guide
 
-You can use popular frontend libraries like Chart.js, Lodash, etc.
+To ensure a consistent look and feel, plugins are encouraged to use the application's built-in UI components. These styles are available automatically to your plugin.
 
-1.  **Download the Library**: Download the library's JavaScript file.
-2.  **Add to Plugin Folder**: Place the file inside your plugin's folder (e.g., in a `lib/` sub-directory).
-3.  **Link in HTML**: Add a `<script>` tag to your `index.html` to include it.
-    ```html
-    <script src="./lib/chart.min.js"></script>
-    ```
+### Buttons (`.btn`)
+
+Use for any action a user can take.
+
+- **Primary Action**: `.btn .btn-primary` (e.g., "Run", "Save")
+- **Secondary Action**: `.btn .btn-secondary` (e.g., "Cancel", "Export")
+- **Success Action**: `.btn .btn-success` (e.g., "Add", "Start")
+- **Destructive Action**: `.btn .btn-danger` (e.g., "Delete", "Stop")
+
+**Example:**
+```html
+<button class="btn btn-primary">
+    <i class="fas fa-play"></i> Run Script
+</button>
+```
+
+### Cards
+
+Cards are used to group related content into modular blocks.
+
+**Example:**
+```html
+<div class="plugin-card">
+    <div class="plugin-card-header">
+        <i class="fas fa-cogs"></i>
+        <h4>My Awesome Plugin</h4>
+    </div>
+    <p>This is a description of what my plugin does.</p>
+    <div class="plugin-card-footer">
+        <span>Version 1.0.0</span>
+        <span>by Developer</span>
+    </div>
+</div>
+```
+
+### Forms
+
+Use these classes to create styled inputs for collecting user data.
+
+- **Container**: `.form-group`
+- **Text Input**: `.form-input`
+- **Dropdown**: `.settings-select`
+- **Checkbox**: `.settings-checkbox`
+
+**Example:**
+```html
+<div class="form-group">
+    <label for="my-input">My Setting</label>
+    <input type="text" id="my-input" class="form-input" placeholder="Enter a value...">
+</div>
+```
+
+### Modals
+
+Modals are used to display content or forms in a focused overlay. You will need to use JavaScript to toggle the `display` style between `none` and `flex` to show and hide them.
+
+**Example:**
+```html
+<div id="my-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>My Modal</h3>
+            <button class="modal-close" onclick="hideModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>This is the content of my modal.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="hideModal()">Close</button>
+        </div>
+    </div>
+</div>
+```
+
+### Tables
+
+The application uses custom-styled tables per tab (e.g., `.services-table`). It's recommended to define a simple table style in your plugin's own `styles.css` for consistency.
+
 
 ---
 

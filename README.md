@@ -61,21 +61,21 @@ Before you begin developing or testing plugins, it is highly recommended that yo
 
 WinTool now includes a powerful command-line tool for plugin development that streamlines the entire development workflow from creation to distribution.
 
-> **🔘 Important:** For detailed information about how buttons work in plugins, see [PLUGIN_BUTTON_GUIDE.md](PLUGIN_BUTTON_GUIDE.md)
+> **🔘 Important:** For detailed information about how buttons work in plugins, ensure you use container-scoped element selection (see Troubleshooting section)
 
 ### Installation
 
 #### Global Installation (Recommended)
 
 ```bash
-cd cli
+cd CLI
 npm install -g .
 ```
 
 Or use the PowerShell installer:
 
 ```powershell
-.\cli\install.ps1
+.\CLI\install.ps1
 ```
 
 After installation, you can use the CLI from anywhere:
@@ -86,7 +86,7 @@ wintool-plugin-cli --help
 
 ### Creating Plugins
 
-> **🔘 Critical:** Buttons in WinTool plugins require specific patterns to work. See [PLUGIN_BUTTON_GUIDE.md](PLUGIN_BUTTON_GUIDE.md) for complete button implementation details.
+> **🔘 Critical:** Buttons in WinTool plugins require specific patterns to work. Use container-scoped element selection instead of `document.getElementById()` (see Troubleshooting section for details).
 
 The CLI supports three plugin types:
 
@@ -180,22 +180,25 @@ wintool-plugin-cli test
 wintool-plugin-cli build
 ```
 
-### Using the Plugin Template
+### Using the Plugin CLI Template
 
-The easiest way to start is by using the official plugin template.
+The easiest way to start is by using the CLI tool to generate a template.
 
-1.  **Locate the Template**: In the WinTool source code, navigate to `AppData\Local\MTechTool\Plugins\`.
-2.  **Copy and Rename**: Copy the `template` directory and paste it into the same `AppData\Local\MTechTool\Plugins\` directory. Rename the copied folder to your plugin's name (e.g., `my-cool-plugin`).
-3.  **Customize the Manifest**: Open `config.json` inside your new plugin folder and edit the `name`, `description`, `author`, and `icon` fields.
-4.  **Start Coding**: Open `index.html`, `script.js`, and `styles.css` to begin building your plugin. The template provides a solid foundation and working examples.
+1.  **Generate Template**: Use the CLI to create a new plugin with a template structure:
+    ```bash
+    wintool-plugin-cli create my-cool-plugin --type=basic
+    ```
+2.  **Navigate to Plugin**: The plugin will be created in `%LOCALAPPDATA%\MTechTool\Plugins\my-cool-plugin\`
+3.  **Customize the Manifest**: Open `plugin.json` inside your new plugin folder and edit the `name`, `description`, `author`, and `icon` fields.
+4.  **Start Coding**: Open `index.html`, `script.js`, and `styles.css` to begin building your plugin. The generated template provides a solid foundation and working examples.
 5.  **Run WinTool**: The application will automatically detect and load your new plugin.
 
 ### Manual Setup
 
 If you prefer to start from scratch:
 
-1.  **Create a Folder**: Create a new folder for your plugin inside `AppData\Local\MTechTool\Plugins\`.
-2.  **Create Core Files**: Inside the new folder, create `config.json`, `index.html`, `script.js`, and `styles.css`.
+1.  **Create a Folder**: Create a new folder for your plugin inside `%LOCALAPPDATA%\MTechTool\Plugins\`.
+2.  **Create Core Files**: Inside the new folder, create `plugin.json`, `index.html`, `script.js`, and `styles.css`.
 3.  **Populate Files**: Add the basic content to each file.
 4.  **Run WinTool**: The application will load your plugin.
 
@@ -207,10 +210,10 @@ If you prefer to start from scratch:
 
 ### Plugin Structure
 
-Every plugin is a directory inside `AppData\Local\MTechTool\Plugins\` and must contain these core files:
+Every plugin is a directory inside `%LOCALAPPDATA%\MTechTool\Plugins\` and must contain these core files:
 
 ```
-/AppData\Local\MTechTool\Plugins\
+%LOCALAPPDATA%\MTechTool\Plugins\
 └── my-cool-plugin/
     ├── plugin.json     // (Required) Manifest file with metadata.
     ├── index.html      // (Required) The UI of the plugin.
@@ -250,7 +253,7 @@ This file tells WinTool how to load your plugin.
 
 ## 🌉 The Plugin API Reference
 
-> **🔘 Button Implementation:** Before diving into the API, ensure your buttons work correctly. See [PLUGIN_BUTTON_GUIDE.md](PLUGIN_BUTTON_GUIDE.md) for essential button patterns.
+> **🔘 Button Implementation:** Before diving into the API, ensure your buttons work correctly. Use container-scoped element selection instead of `document.getElementById()` for proper tab functionality.
 
 WinTool provides a rich, secure API to plugins. The API is split into two parts: a **Frontend API** available in your `script.js`, and a **Backend API** available in your `backend.js`.
 
@@ -738,7 +741,7 @@ Users can install plugins in several ways:
 4. Select the ZIP file
 
 #### Manual Installation
-1. Extract ZIP to `AppData\Local\MTechTool\Plugins`
+1. Extract ZIP to `%LOCALAPPDATA%\MTechTool\Plugins`
 2. Restart WinTool
 3. Plugin appears in sidebar
 
@@ -820,7 +823,7 @@ module.exports = {
 - **Root cause**: Using `document.getElementById()` instead of `container.querySelector()`
 - **Why it happens**: WinTool plugins work like tabs and need container scoping
 - **Quick fix**: Replace all `document.getElementById()` with `container.querySelector()`
-- **Complete solution**: See [PLUGIN_BUTTON_GUIDE.md](PLUGIN_BUTTON_GUIDE.md) for detailed patterns
+- **Complete solution**: Use container-scoped queries: `container.querySelector('#my-element')` instead of `document.getElementById('my-element')`
 - **Generated code**: New CLI plugins have working buttons by default
 
 #### Plugin Not Loading

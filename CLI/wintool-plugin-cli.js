@@ -12,7 +12,7 @@ const { execSync } = require('child_process');
 
 // CLI Configuration
 const CLI_VERSION = '1.0.0';
-const PLUGIN_DIR = path.join(process.env.LOCALAPPDATA || process.env.APPDATA, 'MTechTool', 'Plugins');
+const PLUGIN_DIR = path.join(process.env.LOCALAPPDATA || process.env.APPDATA, 'MTechWare', 'WinTool', 'Plugins');
 const DEV_PLUGIN_DIR = path.join(__dirname, '..', 'src', 'plugins');
 
 // Color codes for console output

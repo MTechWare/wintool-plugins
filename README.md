@@ -188,7 +188,7 @@ The easiest way to start is by using the CLI tool to generate a template.
     ```bash
     wintool-plugin-cli create my-cool-plugin --type=basic
     ```
-2.  **Navigate to Plugin**: The plugin will be created in `%LOCALAPPDATA%\MTechTool\Plugins\my-cool-plugin\`
+2.  **Navigate to Plugin**: The plugin will be created in `%LOCALAPPDATA%\MTechWare\WinTool\Plugins\my-cool-plugin\`
 3.  **Customize the Manifest**: Open `plugin.json` inside your new plugin folder and edit the `name`, `description`, `author`, and `icon` fields.
 4.  **Start Coding**: Open `index.html`, `script.js`, and `styles.css` to begin building your plugin. The generated template provides a solid foundation and working examples.
 5.  **Run WinTool**: The application will automatically detect and load your new plugin.
@@ -197,7 +197,7 @@ The easiest way to start is by using the CLI tool to generate a template.
 
 If you prefer to start from scratch:
 
-1.  **Create a Folder**: Create a new folder for your plugin inside `%LOCALAPPDATA%\MTechTool\Plugins\`.
+1.  **Create a Folder**: Create a new folder for your plugin inside `%LOCALAPPDATA%\MTechWare\WinTool\Plugins\`.
 2.  **Create Core Files**: Inside the new folder, create `plugin.json`, `index.html`, `script.js`, and `styles.css`.
 3.  **Populate Files**: Add the basic content to each file.
 4.  **Run WinTool**: The application will load your plugin.
@@ -208,12 +208,33 @@ If you prefer to start from scratch:
 
 > **🔧 Key Insight:** WinTool plugins work like tabs, not standalone web pages. They must use container-scoped element selection and follow specific initialization patterns.
 
-### Plugin Structure
+### WinTool Directory Structure
 
-Every plugin is a directory inside `%LOCALAPPDATA%\MTechTool\Plugins\` and must contain these core files:
+WinTool organizes all its data in a dedicated directory structure:
 
 ```
-%LOCALAPPDATA%\MTechTool\Plugins\
+%LOCALAPPDATA%\MTechWare\WinTool\            # Main application directory
+├── WinTool.exe                              # Application executable
+├── config.json                              # Application settings and preferences
+└── Plugins\                                 # User-installed plugins directory
+    ├── my-cool-plugin\                      # Individual plugin directory
+    │   ├── plugin.json                      # Plugin manifest
+    │   ├── index.html                       # Plugin UI
+    │   ├── script.js                        # Plugin frontend logic
+    │   ├── styles.css                       # Plugin styles
+    │   ├── backend.js                       # Plugin backend logic (optional)
+    │   ├── package.json                     # Backend dependencies (optional)
+    │   └── node_modules\                    # Plugin-specific dependencies
+    └── another-plugin\                      # Another plugin directory
+        └── ...
+```
+
+### Plugin Structure
+
+Every plugin is a directory inside `%LOCALAPPDATA%\MTechWare\WinTool\Plugins\` and must contain these core files:
+
+```
+%LOCALAPPDATA%\MTechWare\WinTool\Plugins\
 └── my-cool-plugin/
     ├── plugin.json     // (Required) Manifest file with metadata.
     ├── index.html      // (Required) The UI of the plugin.
@@ -741,7 +762,7 @@ Users can install plugins in several ways:
 4. Select the ZIP file
 
 #### Manual Installation
-1. Extract ZIP to `%LOCALAPPDATA%\MTechTool\Plugins`
+1. Extract ZIP to `%LOCALAPPDATA%\MTechWare\WinTool\Plugins`
 2. Restart WinTool
 3. Plugin appears in sidebar
 
